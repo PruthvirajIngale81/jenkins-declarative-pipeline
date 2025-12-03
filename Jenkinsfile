@@ -1,6 +1,15 @@
 pipeline {
     agent any
-    // environment {}
+    environment {
+        // docker image name
+        DOCKER_IMAGE_NAME="amitksunbeam/python-test-app"
+
+        // docker user name
+        DOCKER_USER_NAME="amitksunbeam"
+
+        // docker user auth token
+        DOCKER_AUTH_TOKEN=credentials('DOCKER_AUTH_TOKEN')
+    }
 
     stages {
         stage('scm') {
@@ -16,13 +25,16 @@ pipeline {
             }
         }
 
-        stage('test the application') {
+        stage('prepare docker image') {
             steps {
-                sh 'pytest test_app.py'
+                sh 'docker image build -t ${DOCKER_IMAGE_NAME} .'
             }
         }
 
-        // stage('prepare the image') {
-        // }
+        stage('docker login') {
+            steps {
+                sh 'echo ${DOCKER_AUTH_TOKEN} | docker login -u ${DOCKER_USER_NAME} --password-stdin'
+            }
+        }
     }
 }
