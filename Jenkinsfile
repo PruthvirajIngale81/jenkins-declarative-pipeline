@@ -2,10 +2,10 @@ pipeline {
     agent any
     environment {
         // docker image name
-        DOCKER_IMAGE_NAME="amitksunbeam/python-test-app"
+        DOCKER_IMAGE_NAME="pruthviraj81/python-test-app"
 
         // docker user name
-        DOCKER_USER_NAME="amitksunbeam"
+        DOCKER_USER_NAME="pruthviraj81"
 
         // docker user auth token
         DOCKER_AUTH_TOKEN=credentials('DOCKER_AUTH_TOKEN')
