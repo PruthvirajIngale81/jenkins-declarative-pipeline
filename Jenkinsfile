@@ -12,12 +12,13 @@ pipeline {
     }
 
     stages {
-        stage('scm') {
-            steps {
-                echo "already taken care by Jenkins"
-            }
-        }
+        // stage('scm') {
+        //     steps {
+        //         echo "already taken care by Jenkins"
+        //     }
+        // }
 
+        // install the required packages
         stage('prepare env') {
             steps {
                 // execute a shell command
@@ -25,15 +26,31 @@ pipeline {
             }
         }
 
-        stage('prepare docker image') {
+        // build the docker image 
+        stage('build docker image') {
             steps {
                 sh 'docker image build -t ${DOCKER_IMAGE_NAME} .'
             }
         }
 
+        // login to docker hub
         stage('docker login') {
             steps {
                 sh 'echo ${DOCKER_AUTH_TOKEN} | docker login -u ${DOCKER_USER_NAME} --password-stdin'
+            }
+        }
+
+        // push the docker image to docker hub
+        stage('push docker image') {
+            steps {
+                sh 'docker image push ${DOCKER_IMAGE_NAME}'
+            }
+        }
+
+        // restart the service
+        stage('restart service') {
+            steps {
+                sh 'docker service update --force --image ${DOCKER_IMAGE_NAME} python-app' 
             }
         }
     }
